@@ -1,4 +1,5 @@
-import pygame, sys, random, time
+import pygame, sys, time
+from random import randint
 from conf import *
 
 
@@ -11,16 +12,48 @@ status = True
 
 snake_direction = "down"
 snake = [(0,0), (0, 1)]
-
+foods = [((randint(0, display_height),randint(0,display_width)), 1)]
+score = 0
+walls = [(8,8)]
 
 def draw_snake():
     for el in snake:
         pygame.draw.rect(screen, WHITE, pygame.Rect(el[1] * square_len, el[0] * square_len, square_len, square_len))
 
+def draw_food():
+    for el in foods:
+        pygame.draw.rect(screen, GREEN, pygame.Rect(el[0][1] * square_len, el[0][0] * square_len, square_len, square_len))
+
 def calculate_snake_position():
     global snake, snake_direction
-    new_snake = snake[1:]
     snake_head = snake[-1]
+    new_snake_head = calculate_new_snake_head_pos(snake_direction, snake_head)
+    if check_food_collision(new_snake_head):
+        new_snake = snake[:]
+    else:
+        new_snake = snake[1:]
+    new_snake.append(new_snake_head)
+    snake = new_snake
+
+def check_food_collision(new_snake_head):
+    global foods, score
+    for food in foods:
+        if food[0] == new_snake_head:
+            score += food[1]
+            foods.remove(food)
+            return True
+    return False
+
+def spawn_food(food_level):
+    global foods
+    new_food = ((randint(0, display_height), randint(0, display_width)), food_level)
+    if new_food[0] in snake:
+        spawn_food(food_level)
+    else:
+        foods.append(new_food)
+
+
+def calculate_new_snake_head_pos(snake_direction, snake_head):
     if snake_direction == "right":
         new_snake_head_row = snake_head[0]
         new_snake_head_col = snake_head[1] + 1
@@ -33,7 +66,6 @@ def calculate_snake_position():
     else:
         new_snake_head_row = snake_head[0] + 1
         new_snake_head_col = snake_head[1]
-
     if new_snake_head_row > display_height:
         new_snake_head_row = 0
     elif new_snake_head_row < 0:
@@ -42,12 +74,7 @@ def calculate_snake_position():
         new_snake_head_col = 0
     elif new_snake_head_col < 0:
         new_snake_head_col = display_width
-
-
-
-    new_snake_head = (new_snake_head_row, new_snake_head_col)
-    new_snake.append(new_snake_head)
-    snake = new_snake
+    return (new_snake_head_row, new_snake_head_col)
 
 
 while status:
@@ -66,7 +93,9 @@ while status:
 
     screen.fill(BLACK)
     draw_snake()
+    draw_food()
     calculate_snake_position()
+    spawn_food(1)
 
 
 
