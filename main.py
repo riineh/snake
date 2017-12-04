@@ -1,28 +1,33 @@
 import pygame, sys, random, time
+from conf import *
+
 
 pygame.init()
-screen = pygame.display.set_mode((800, 800))
+screen = pygame.display.set_mode((display_width * square_len, display_height * square_len))
 pygame.display.set_caption("Snake Game")
 clock = pygame.time.Clock()
 
-#Colors
-green = (0,128,0)
-white = (255,255,255)
-black = (0, 0, 0)
 status = True
-x_pos = 60
-y_pos = 60
+
+snake = [(0,0), (0, 1)]
+
+
+def draw_snake():
+    for el in snake:
+        pygame.draw.rect(screen, WHITE, pygame.Rect(el[1] * square_len, el[0] * square_len, square_len, square_len))
+
+def calculate_snake_position():
+    pass
+
 
 while status:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             status = False
-    screen.fill(black)
-    pygame.draw.rect(screen, white, pygame.Rect(x_pos, y_pos, 30, 30))
-    x_pos += 30
-    y_pos += 0
+    screen.fill(BLACK)
+    draw_snake()
 
-    if x_pos > 800:
-        x_pos = 0
+
+
     pygame.display.flip()
     clock.tick(5)
