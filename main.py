@@ -2,9 +2,8 @@ import pygame, sys, time
 from random import randint
 from conf import *
 
-
 pygame.init()
-screen = pygame.display.set_mode((display_width * square_len, display_height * square_len))
+screen = pygame.display.set_mode((game_area_width * square_len, game_area_height * square_len + menu_height))
 pygame.display.set_caption("Snake Game")
 clock = pygame.time.Clock()
 
@@ -12,7 +11,7 @@ status = True
 
 snake_direction = "down"
 snake = [(0,0), (0, 1)]
-foods = [((randint(0, display_height),randint(0,display_width)), 1)]
+foods = [((randint(0, game_area_height),randint(0,game_area_width)), 1)]
 score = 0
 walls = [(8,8)]
 
@@ -46,7 +45,7 @@ def check_food_collision(new_snake_head):
 
 def spawn_food(food_level):
     global foods
-    new_food = ((randint(0, display_height), randint(0, display_width)), food_level)
+    new_food = ((randint(0, game_area_height), randint(0, game_area_width)), food_level)
     if new_food[0] in snake:
         spawn_food(food_level)
     else:
@@ -66,14 +65,14 @@ def calculate_new_snake_head_pos(snake_direction, snake_head):
     else:
         new_snake_head_row = snake_head[0] + 1
         new_snake_head_col = snake_head[1]
-    if new_snake_head_row > display_height:
+    if new_snake_head_row > game_area_height:
         new_snake_head_row = 0
     elif new_snake_head_row < 0:
-        new_snake_head_row = display_height
-    elif new_snake_head_col > display_width:
+        new_snake_head_row = game_area_height
+    elif new_snake_head_col > game_area_width:
         new_snake_head_col = 0
     elif new_snake_head_col < 0:
-        new_snake_head_col = display_width
+        new_snake_head_col = game_area_width
     return (new_snake_head_row, new_snake_head_col)
 
 
