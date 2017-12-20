@@ -2,6 +2,7 @@
 GREEN = (0,128,0)
 WHITE = (255,255,255)
 BLACK = (0, 0, 0)
+GRAY = (105,105,105)
 
 # Dimensions
 square_len = 20

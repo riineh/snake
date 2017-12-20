@@ -7,6 +7,7 @@ screen = pygame.display.set_mode((game_area_width * square_len, game_area_height
 pygame.display.set_caption("Snake Game")
 clock = pygame.time.Clock()
 
+
 status = True
 
 snake_direction = "down"
@@ -14,6 +15,17 @@ snake = [(0,0), (0, 1)]
 foods = [((randint(0, game_area_height),randint(0,game_area_width)), 1)]
 score = 0
 walls = [(8,8)]
+lives = 3
+
+def draw_info_bar():
+    bar = pygame.draw.rect(screen, GRAY, pygame.Rect(0, game_area_height * square_len, game_area_width * square_len, menu_height * square_len))
+    # Siia tee tausta joonistus, et oleks infobar teist värvi.
+    draw_info_texts()
+
+def draw_info_texts():
+    myfont = pygame.font.SysFont("monospace", 40)
+    label = myfont.render("Score: " + str(score), 1, BLACK)
+    screen.blit(label, (20, game_area_height * square_len + 26))
 
 def draw_snake():
     for el in snake:
@@ -91,10 +103,12 @@ while status:
                 snake_direction = "down"
 
     screen.fill(BLACK)
+    draw_info_bar()
     draw_snake()
     draw_food()
     calculate_snake_position()
     spawn_food(1)
+    draw_info_bar()
 
 
 
