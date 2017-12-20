@@ -8,25 +8,26 @@ pygame.display.set_caption("Snake Game")
 clock = pygame.time.Clock()
 speed = 5
 
+running = True
 
-game_started = True
-
+current_state = STATE_GAME_OVER
 
 snake_direction = "down"
-snake = [(0,0), (0, 1)]
-foods = [((randint(0, game_area_height),randint(0,game_area_width)), 1)]
+snake = [(0, 0), (0, 1)]
+foods = [((randint(0, game_area_height), randint(0, game_area_width)), 1)]
 score = 0
 walls = [(8, 8)]
 
+font = pygame.font.SysFont("monospace", 30)
 
 def draw_info_bar():
-    pygame.draw.rect(screen, GRAY, pygame.Rect(0, game_area_height * square_len, game_area_width * square_len, menu_height * square_len))
+    pygame.draw.rect(screen, GRAY, pygame.Rect(0, game_area_height * square_len, game_area_width * square_len,
+                                               menu_height * square_len))
     draw_info_texts()
 
 
 def draw_info_texts():
-    myfont = pygame.font.SysFont("monospace", 30)
-    score_lable = myfont.render("Score: " + str(score), 1, BLACK)
+    score_lable = font.render("Score: " + str(score), 1, BLACK)
     screen.blit(score_lable, (20, game_area_height * square_len + 26))
 
 
@@ -37,7 +38,8 @@ def draw_snake():
 
 def draw_food():
     for el in foods:
-        pygame.draw.rect(screen, GREEN, pygame.Rect(el[0][1] * square_len, el[0][0] * square_len, square_len, square_len))
+        pygame.draw.rect(screen, GREEN,
+                         pygame.Rect(el[0][1] * square_len, el[0][0] * square_len, square_len, square_len))
 
 
 def calculate_snake_position():
@@ -48,7 +50,7 @@ def calculate_snake_position():
         new_snake = snake[:]
     elif check_collision():
         new_snake = snake[:]
-        #peab lõpetama
+        # peab lõpetama
     else:
         new_snake = snake[1:]
     new_snake.append(new_snake_head)
@@ -65,11 +67,12 @@ def check_food_collision(new_snake_head):
             return True
     return False
 
+
 def check_collision():
     global snake
     if snake[0] in snake[1:]:
         return True
-    # Iseendaga kokkupõrget peab kontrollima
+        # Iseendaga kokkupõrget peab kontrollima
 
 
 def spawn_food(food_level):
@@ -105,11 +108,12 @@ def calculate_new_snake_head_pos(snake_direction, snake_head):
     return (new_snake_head_row, new_snake_head_col)
 
 
-while game_started:
+def run_game():
+    global running, snake_direction
     valid_key_pressed = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game_started = False
+            running = False
         if not valid_key_pressed:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and snake_direction != "right":
@@ -136,9 +140,72 @@ while game_started:
     calculate_snake_position()
     draw_info_bar()
 
-
-
-
-
     pygame.display.flip()
     clock.tick(speed)
+
+
+def draw_text_to_center(text, order):
+    score_label = font.render(text, 1, BLACK)
+    text_width, text_height = font.size(text)
+    screen.blit(score_label, (game_area_width * square_len / 2 - text_width / 2, game_area_height * square_len / 2 + order * (text_height + 20)))
+
+
+def draw_start_menu_info_texts():
+    draw_text_to_center("To start the game press SPACE", -1)
+    draw_text_to_center("To view the high-scores press H", 0)
+    draw_text_to_center("To exit press ESC", 1)
+
+def draw_game_over_info_texts():
+    draw_text_to_center("GAME OVER!!!", -3)
+    draw_text_to_center("Your score was: " + str(score), -2)
+    draw_text_to_center("", -1)
+    draw_text_to_center("To play again press SPACE", 0)
+    draw_text_to_center("To view the high-scores press H", 1)
+    draw_text_to_center("To exit press ESC", 2)
+
+
+
+def run_start_menu():
+    global running, current_state
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                current_state = STATE_GAME_STARTED
+            elif event.key == pygame.K_h:
+                print("h pressed")
+            elif event.key == pygame.K_ESCAPE:
+                running = False
+
+    screen.fill(WHITE)
+    draw_start_menu_info_texts()
+    pygame.display.flip()
+    clock.tick(speed)
+
+def run_game_over():
+    global running, current_state
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                current_state = STATE_GAME_STARTED
+            elif event.key == pygame.K_h:
+                print("h pressed")
+            elif event.key == pygame.K_ESCAPE:
+                running = False
+
+    screen.fill(WHITE)
+    draw_game_over_info_texts()
+    pygame.display.flip()
+    clock.tick(speed)
+
+
+while running:
+    if current_state == STATE_GAME_STARTED:
+        run_game()
+    elif current_state == STATE_MAIN_MENU:
+        run_start_menu()
+    elif current_state == STATE_GAME_OVER:
+        run_game_over()
