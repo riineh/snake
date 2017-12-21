@@ -1,4 +1,4 @@
-import pygame, sys, time
+import pygame
 from random import randint
 from conf import *
 
@@ -22,6 +22,7 @@ walls = [(8, 8)]
 
 font = pygame.font.SysFont("monospace", 30)
 
+
 def draw_info_bar():
     pygame.draw.rect(screen, GRAY, pygame.Rect(0, game_area_height * square_len, game_area_width * square_len,
                                                menu_height * square_len))
@@ -43,6 +44,7 @@ def draw_food():
         pygame.draw.rect(screen, GREEN,
                          pygame.Rect(el[0][1] * square_len, el[0][0] * square_len, square_len, square_len))
 
+
 def update_high_scores():
     f = open("high-scores.txt", "r+", encoding="utf-8")
     lines = f.readlines()
@@ -63,13 +65,10 @@ def update_high_scores():
         existing_scores = existing_scores[:-1]
         existing_scores.append(score)
 
-    print(existing_scores)
-
     for existing_score in existing_scores:
         f.write(str(existing_score) + "\n")
 
     f.close()
-
 
 
 def end_game():
@@ -186,7 +185,6 @@ def draw_highscores():
     draw_text_to_center("Press ESC to main menu", vert_index)
 
 
-
 def run_game():
     global running, snake_direction, current_state
     valid_key_pressed = False
@@ -224,6 +222,7 @@ def run_game():
     pygame.display.flip()
     clock.tick(speed)
 
+
 def start_game():
     global current_state, initial_snake, speed, score, snake, snake_direction
     speed = initial_speed
@@ -231,6 +230,7 @@ def start_game():
     score = 0
     snake = initial_snake
     current_state = STATE_GAME_STARTED
+
 
 def run_start_menu():
     global running, current_state
@@ -269,6 +269,7 @@ def run_game_over():
     pygame.display.flip()
     clock.tick(speed)
 
+
 def run_high_scores():
     global running, current_state
     for event in pygame.event.get():
@@ -282,6 +283,7 @@ def run_high_scores():
     draw_highscores()
     pygame.display.flip()
     clock.tick(speed)
+
 
 while running:
     if current_state == STATE_GAME_STARTED:
